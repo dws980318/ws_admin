@@ -1,0 +1,686 @@
+<template>
+  <div class="details">
+    <div class="table">
+      <el-row style="text-align: left;padding: 20px;">
+        <img src="@/common/images/logo.jpg" />
+      </el-row>
+      <el-row>
+        <h2>广东外语外贸大学海外名师讲学项目</h2>
+        <h2>结项表</h2>
+      </el-row>
+      <el-row style="margin-top: 5%;">
+        <div class="p3 flex">
+          <p style="margin-left: 36px;">
+            院校名称：
+            <span></span>
+          </p>
+          <el-input class="input1" style="height: 55px;" v-model="form.deanName"></el-input>
+        </div>
+        <div class="p3 flex">
+          <p style="margin-left: 36px;">
+            项目实施院系：
+            <span></span>
+          </p>
+          <el-input class="input1" style="height: 55px;" v-model="form.proDean"></el-input>
+        </div>
+        <div class="p3 flex">
+          <p style="margin-left: 36px;">
+            填表日期：
+            <span></span>
+          </p>
+          <el-date-picker
+            class="input1"
+            style="width: 250px;"
+            v-model="form.startDate"
+            type="date"
+            value-format="yyyy-MM-dd"
+            format="yyyy-MM-dd"
+            placeholder="选择日期"
+          ></el-date-picker>
+        </div>
+      </el-row>
+      <h3>一、项目单位基本信息</h3>
+      <el-row style="border-left: 1px solid #000;border-top: 1px solid #000;">
+        <el-col>
+          <el-col :span="12" class="flex">
+            <div class="center">项目负责人姓名</div>
+            <el-input v-model="form.proUser" style="flex:1;"></el-input>
+          </el-col>
+          <el-col :span="12" class="flex">
+            <div class="center">职务职称</div>
+            <el-input v-model="form.dept" style="flex:1;"></el-input>
+          </el-col>
+        </el-col>
+        <el-col>
+          <el-col :span="12" class="flex">
+            <div :class="['center', {star: star.phone}]">手机号码</div>
+            <el-input
+              :class="[{border: border.phone}]"
+              @change="phone"
+              v-model="form.phone"
+              style="flex:1;"
+            ></el-input>
+          </el-col>
+          <el-col :span="12" class="flex">
+            <div :class="['center', {star: star.phoneCall}]">办公电话</div>
+            <el-input
+              :class="[{border: border.phoneCall}]"
+              @change="phoneCall"
+              v-model="form.phoneCall"
+              style="flex:1;"
+            ></el-input>
+          </el-col>
+        </el-col>
+        <el-col>
+          <el-col :span="12" class="flex">
+            <div :class="['center', {star: star.email}]">电子邮箱</div>
+            <el-input
+              :class="[{border: border.email}]"
+              @change="email"
+              v-model="form.email"
+              style="flex:1;"
+            ></el-input>
+          </el-col>
+          <el-col :span="12" class="flex">
+            <div class="center">传真号码</div>
+            <el-input v-model="form.fax" style="flex:1;"></el-input>
+          </el-col>
+        </el-col>
+      </el-row>
+      <h3>二、申请报销资助经费</h3>
+      <el-row class="flex" style="border-top: 1px solid #000;border-left: 1px solid #000;">
+        <div :style="{height: heightOne + 'px' }">
+          <div class="center" style="height: 100%;">报销经费明细</div>
+        </div>
+        <div style="flex:1;border-left: 1px solid #000;" ref="rightOne">
+          <el-col :span="24">
+            <el-col :span="7">
+              <div class="center2">申请资助科目</div>
+            </el-col>
+            <el-col :span="3">
+              <div class="center2">金额（万元）</div>
+            </el-col>
+            <el-col :span="12">
+              <div class="center2">测算依据</div>
+            </el-col>
+            <el-col :span="2">
+              <div class="center2">操作</div>
+            </el-col>
+          </el-col>
+          <el-col :span="24" v-for="(item, index) in forms" :key="index">
+            <el-col :span="7">
+              <el-input v-model="item.date.subject" class="input2"></el-input>
+            </el-col>
+            <el-col :span="3">
+              <el-input v-model="item.date.amount" @input="numValidOne(item)" class="input2"></el-input>
+            </el-col>
+            <el-col :span="12">
+              <el-input v-model="item.date.content" class="input2"></el-input>
+            </el-col>
+            <el-col :span="2">
+              <div class="delete input2" @click="deleteAction1(item, index)">-</div>
+            </el-col>
+          </el-col>
+        </div>
+      </el-row>
+      <el-row class="flex" style="border-left: 1px solid #000;">
+        <div style="width: 120px;">
+          <div class="center" style="width: 100%;">合计</div>
+        </div>
+        <div style="flex:1;border-left: 1px solid #000;">
+          <el-col :span="24">
+            <el-col :span="7">
+              <el-input disabled v-model="form.name1" class="input2"></el-input>
+            </el-col>
+            <el-col :span="3">
+              <el-input v-model="form.amountFund" class="input2"></el-input>
+            </el-col>
+            <el-col :span="12">
+              <el-input disabled v-model="form.name3" class="input2"></el-input>
+            </el-col>
+            <el-col :span="2">
+              <div class="center2 btn" @click="addAction1">+</div>
+            </el-col>
+          </el-col>
+        </div>
+      </el-row>
+      <h3>三、项目执行情况</h3>
+      <el-row class="flex" style="border-top: 1px solid #000;border-left: 1px solid #000;">
+        <div class="center">项目名称</div>
+        <el-input v-model="form.proName" style="flex:1;"></el-input>
+      </el-row>
+      <el-row style="border-left: 1px solid #000;">
+        <el-col :span="12" class="flex">
+          <div class="center">项目所在院系</div>
+          <el-input v-model="form.proDept" style="flex:1;"></el-input>
+        </el-col>
+        <el-col :span="12" class="flex">
+          <div class="center" style="width: 100px;">所属学科</div>
+          <el-input v-model="form.subject" style="flex:1;"></el-input>
+        </el-col>
+      </el-row>
+      <el-row>
+        <p
+          style="padding-left: 10px;line-height: 30px;font-weight: 600;border-left: 1px solid #000;border-right: 1px solid #000;"
+        >（一）项目执行情况（包括专家工作情况、取得成效等，可另附页）</p>
+        <el-input type="textarea" class="text" v-model="form.opinion" :autosize="{ minRows: 10 }"></el-input>
+      </el-row>
+
+      <h3>四、聘请国外专家情况表</h3>
+      <el-row style="border-top: 1px solid #000;border-left: 1px solid #000;">
+        <el-col :span="20">
+          <el-col class="flex">
+            <div class="center" style="height: 64px;">
+              <span>专家姓名</span>
+            </div>
+            <el-col style="flex:1;border-left: 1px solid #000;">
+              <el-col class="flex">
+                <el-col :span="12" class="flex">
+                  <div class="center">中文名</div>
+                  <el-input v-model="form.expertName" style="flex:1;"></el-input>
+                </el-col>
+                <el-col :span="12" class="flex">
+                  <div class="center" style="width: 100px;">性别</div>
+                  <el-select v-model="form.expertSex" style="flex:1;" placeholder="请选择性别">
+                    <el-option
+                      v-for="item in options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+                </el-col>
+              </el-col>
+              <el-col class="flex">
+                <el-col :span="12" class="flex">
+                  <div class="center">外文名</div>
+                  <el-input v-model="form.expertNameEnglish" style="flex:1;"></el-input>
+                </el-col>
+                <el-col :span="12" class="flex">
+                  <div class="center" style="width: 100px;">出生</div>
+                  <el-date-picker
+                    style="flex:1;"
+                    v-model="form.expertDay"
+                    type="date"
+                    placeholder="选择日期"
+                  ></el-date-picker>
+                </el-col>
+              </el-col>
+            </el-col>
+          </el-col>
+          <el-col class="flex">
+            <el-col :span="8" class="flex">
+              <div class="center">国籍</div>
+              <el-input v-model="form.expertCountry" style="flex:1;"></el-input>
+            </el-col>
+            <el-col :span="8" class="flex">
+              <div class="center" style="width: 100px;">职务职称</div>
+              <el-input v-model="form.expertDep" style="flex:1;"></el-input>
+            </el-col>
+            <el-col :span="8" class="flex">
+              <div class="center" style="width: 100px;">专业领域</div>
+              <el-input v-model="form.expertSubject" style="flex:1;"></el-input>
+            </el-col>
+          </el-col>
+          <el-col>
+            <el-col :span="12" class="flex">
+              <div class="center">海外工作单位</div>
+              <el-input v-model="form.expertUnit" style="flex:1;"></el-input>
+            </el-col>
+            <el-col :span="12" class="flex">
+              <div class="center">来粤工作天数</div>
+              <el-input @input="numValid" v-model="form.expertSumDay" style="flex:1;"></el-input>
+            </el-col>
+          </el-col>
+          <el-col>
+            <el-col :span="12" class="flex">
+              <div :class="['center', {star: star.expertPhone}]">联系方式</div>
+              <el-input
+                :class="[{border: border.expertPhone}]"
+                @change="expertPhone"
+                v-model="form.expertPhone"
+                style="flex:1;"
+              ></el-input>
+            </el-col>
+            <el-col :span="12" class="flex">
+              <div class="center">护照号码</div>
+              <el-input v-model="form.expertCode" style="flex:1;"></el-input>
+            </el-col>
+          </el-col>
+        </el-col>
+        <el-col :span="4">
+          <el-upload
+            class="avatar-uploader"
+            style="height: 100%;"
+            :action="$api.upload"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="form.icon" :src="form.icon?form.icon : ''" class="avatar" />
+            <el-avatar v-else>照片</el-avatar>
+          </el-upload>
+        </el-col>
+      </el-row>
+
+      <el-row class="flex" style="height: 396px;border-left: 1px solid #000;">
+        <div style="width: 120px;height: 100%;">
+          <div class="center" style="width: 100%;height: 100%;">简述学历 背景、主要工作经 历和主要学术及科研经历、国际公认的学术成就等</div>
+        </div>
+        <div style="flex:1;height:100%;">
+          <el-col :span="24" style="flex:1;height: 100%;">
+            <el-input
+              type="textarea"
+              class="text"
+              v-model="form.expertContent"
+              style="height: 100%;"
+            ></el-input>
+          </el-col>
+        </div>
+      </el-row>
+      <!-- <h3>五、项目申报部门的审核意见</h3>
+      <p
+        style="padding-left: 10px;line-height: 30px;font-weight: 600;border: 1px solid #000;border-bottom: 0;"
+      >项目单位（院校）评估意见：</p>
+      <el-row class="flex" style="height: 396px;">
+        <div style="flex:1;display:flex;flex-direction:column;height: 100%;">
+          <el-input type="textarea" class="text" v-model="form.r" style="height: 100%;"></el-input>
+          <div style="border-left: 1px solid #000;">
+            <el-col :span="8" class="flex">
+              <div class="center" style="padding: 0 10px;">负责人（签字）：</div>
+              <el-input v-model="form.s" style="flex:1;"></el-input>
+            </el-col>
+            <el-col :span="8" class="flex">
+              <div class="center">职务：</div>
+              <el-input v-model="form.t" style="flex:1;"></el-input>
+            </el-col>
+            <el-col :span="8" class="flex">
+              <div class="center">单位(公章)：</div>
+              <el-input v-model="form.u" style="flex:1;"></el-input>
+            </el-col>
+            <el-col
+              :span="24"
+              class="flex"
+              style="flex-direction: row-reverse;border-right: 1px solid #000;border-bottom: 1px solid #000;padding-right: 20px;"
+            >
+              <div style="line-height: 60px;">
+                <el-date-picker class="input1" v-model="form.v" type="date" placeholder="选择日期"></el-date-picker>
+              </div>
+            </el-col>
+          </div>
+        </div>
+      </el-row>
+      <el-row>
+        <p
+          style="padding-left: 10px;line-height: 30px;font-weight: 600;border-left: 1px solid #000;border-right: 1px solid #000;"
+        >国际合作与交流处意见：</p>
+        <el-input type="textarea" class="text" v-model="form.w" :autosize="{ minRows: 10 }"></el-input>
+      </el-row>-->
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Details",
+  props: {
+    form: {
+      type: Object,
+      default: {},
+    },
+    forms: {
+      type: Array,
+      default: [],
+    },
+  },
+  data() {
+    return {
+      options: [
+        { value: "1", label: "男" },
+        { value: "0", label: "女" },
+      ],
+      list: [
+        { name1: "", name2: "", name3: "", name4: "" },
+        { name1: "", name2: "", name3: "", name4: "" },
+        { name1: "", name2: "", name3: "", name4: "" },
+        { name1: "", name2: "", name3: "", name4: "" },
+      ],
+      border: {
+        phone: false,
+        phoneCall: false,
+        email: false,
+        expertPhone: false,
+      },
+      star: {
+        phone: true,
+        phoneCall: true,
+        email: true,
+        expertPhone: true,
+      },
+      heightOne: 0,
+    };
+  },
+  watch: {},
+  created() {},
+  mounted() {
+    this.$nextTick(() => {
+      // 页面渲染完成后的回调
+      this.heightOne = this.$refs.rightOne.offsetHeight;
+    });
+  },
+  methods: {
+    numValidOne(item) {
+      if (item.date.amount) {
+        item.date.amount = item.date.amount.replace(/[^0-9]/g, "");
+      }
+      this.sum();
+    },
+    sum() {
+      this.form.amountFund = 0;
+      for (let i in this.forms) {
+        this.form.amountFund =
+          this.form.amountFund + parseInt(this.forms[i].date.amount);
+      }
+    },
+    numValid() {
+      if (this.form.expertSumDay) {
+        this.form.expertSumDay = this.form.expertSumDay.replace(/[^0-9]/g, "");
+      }
+    },
+    phone() {
+      if (
+        this.form.phone === "" ||
+        !/(^[1][34578]\d{9}$)/.test(this.form.phone)
+      ) {
+        this.$message.error("手机号码输入错误，请重新输入！");
+        this.border.phone = true;
+      } else {
+        this.border.phone = false;
+      }
+    },
+    phoneCall() {
+      if (
+        this.form.phoneCall === "" ||
+        !/(^[1][34578]\d{9}$)/.test(this.form.phoneCall)
+      ) {
+        this.$message.error("电话输入错误，请重新输入！");
+        this.border.phoneCall = true;
+      } else {
+        this.border.phoneCall = false;
+      }
+    },
+    email() {
+      if (
+        this.form.email === "" ||
+        !/^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+([.][a-zA-Z]+){1,2}$/.test(
+          this.form.email
+        )
+      ) {
+        this.$message.error("邮箱输入错误，请重新输入！");
+        this.border.email = true;
+      } else {
+        this.border.email = false;
+      }
+    },
+    expertPhone() {
+      if (
+        this.form.expertPhone === "" ||
+        !/(^[1][34578]\d{9}$)/.test(this.form.expertPhone)
+      ) {
+        this.$message.error("电话输入错误，请重新输入！");
+        this.border.expertPhone = true;
+      } else {
+        this.border.expertPhone = false;
+      }
+    },
+    handleAvatarSuccess(res, file) {
+      this.form.icon = res.fileDownloadUri;
+    },
+    beforeAvatarUpload(file) {
+      const isIMG = [
+        "image/jpg",
+        "image/jpeg",
+        "image/png",
+        "image/pjpeg",
+        "image/gif",
+        "image/bmp",
+        "image/x-png",
+      ];
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (isIMG.indexOf(file.type) === -1) {
+        this.$message.error("上传文件只能是 图片 格式!");
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+        return false;
+      }
+      return isIMG && isLt2M;
+    },
+    addAction1() {
+      this.$nextTick(() => {
+        // 页面渲染完成后的回调
+        this.heightOne = this.$refs.rightOne.offsetHeight + 32;
+      });
+      this.forms.push({
+        date: {},
+      });
+    },
+    deleteAction1(item, index) {
+      if (this.forms.length < 2) {
+        this.$message.error("不能再删了！");
+      } else {
+        this.forms.splice(index, 1);
+        this.heightOne = this.$refs.rightOne.offsetHeight - 32;
+        this.sum();
+      }
+    },
+  },
+};
+</script>
+
+<style lang="stylus" scoped>
+.star {
+  &::before {
+    content: '* ';
+    color: red;
+  }
+}
+
+.border {
+  /deep/ .el-input__inner {
+    border: 1px solid red !important;
+  }
+}
+
+.table {
+  width: 100%;
+  max-width: 880px;
+  margin: 20px auto;
+  height: auto;
+  padding: 20px;
+  border: 1px solid #000;
+  font-size: 12px;
+
+  /deep/ .el-textarea__inner {
+    height: 100%;
+    border: 1px solid #000;
+    border-radius: 0;
+    resize: none;
+  }
+
+  /deep/ .el-input__inner {
+    border: none;
+    border-radius: 0;
+    border: 1px solid #000;
+    border-top: 0;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  h2 {
+    font-size: 26px;
+    text-align: center;
+    line-height: 54px;
+    color: #385b83;
+  }
+
+  h3 {
+    font-size: 26px;
+    text-align: center;
+    line-height: 54px;
+  }
+
+  .flex {
+    flex-col-center();
+  }
+
+  .colum {
+    flex-ver-center();
+  }
+
+  .text {
+    /deep/ .el-textarea__inner {
+      height: 100%;
+      border: 1px solid #000;
+      border-top: 0;
+      border-radius: 0;
+      resize: none;
+    }
+  }
+
+  .center {
+    text-align: center;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #000;
+    width: 120px;
+    padding: 0 10px;
+    font-weight: 600;
+  }
+
+  .input1 {
+    max-width: 250px;
+    height: 32px;
+
+    /deep/ .el-input__inner {
+      height: 32px;
+      border-radius: 0;
+      border: 0;
+      border-bottom: 1px solid #000;
+    }
+
+    /deep/ .el-input__icon {
+      line-height: 0;
+    }
+  }
+
+  .center2 {
+    text-align: center;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+    border-top: 0;
+    border-left: 0;
+    padding: 0 20px;
+    font-weight: 600;
+  }
+
+  .input2 {
+    height: 32px;
+    border: none;
+    border: 1px solid #000;
+    border-top: 0;
+    border-left: 0;
+
+    /deep/ .el-input__inner {
+      border-left: 0;
+      border-right: 0;
+    }
+  }
+
+  .p1 {
+    // margin-left: 36px;
+    line-height: 30px;
+    // text-indent: 36px;
+  }
+
+  .p3 {
+    line-height: 30px;
+
+    p {
+      width: 120px;
+      text-align: justify;
+      height: 32px;
+
+      span {
+        width: 100%;
+        display: inline-block;
+        height: 0;
+      }
+    }
+  }
+
+  .avatar-uploader {
+    border: 1px solid #000;
+    border-top: 0;
+    border-left: 0;
+
+    /deep/ .el-upload {
+      border: 1px dashed #d9d9d9;
+      width: 100%;
+      height: 100%;
+
+      &:hover {
+        border-color: $theme-color;
+      }
+
+      .el-avatar {
+        display: inline-block;
+        box-sizing: border-box;
+        text-align: center;
+        overflow: hidden;
+        color: #606266;
+        // background: #c0c4cc;
+        width: 100%;
+        height: 100%;
+        line-height: 154px;
+        font-size: 24px;
+      }
+    }
+  }
+
+  .avatar {
+    width: 100%;
+    height: 154px;
+    overflow: hidden;
+    display: block;
+  }
+}
+
+.btn {
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    color: #00d0ff;
+  }
+}
+
+.delete {
+  font-size: 40px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 28px;
+
+  &:hover {
+    color: red;
+  }
+}
+</style>
