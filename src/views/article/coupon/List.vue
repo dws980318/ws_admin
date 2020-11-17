@@ -163,7 +163,7 @@ export default {
       // this.dialogVisible = true
       // this.src = id
       // this.$router.push("/article/coupon/" + id);
-      window.open("http://192.168.0.109:8081/modeler.html?modelId=" + id);
+      window.open("http://192.168.0.195:8081/modeler.html?modelId=" + id);
     },
     handleSizeChange(val) {
       this.URLparams.pageNumber = 1;

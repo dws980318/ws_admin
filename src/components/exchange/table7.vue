@@ -1,13 +1,15 @@
 <template>
   <div class="details">
     <div class="table">
-      <el-row style="text-align: left;padding: 20px;border-right: 1px solid #000;">
+      <el-row
+        style="text-align: left; padding: 20px; border-right: 1px solid #000"
+      >
         <img src="@/common/images/logo.jpg" />
       </el-row>
       <el-row>
         <h2>资料报送申请表</h2>
       </el-row>
-      <el-row>
+      <!-- <el-row>
         <el-col :span="12" class="flex">
           <div class="center">流水号</div>
           <el-input v-model="form.date.serialNumber" disabled style="flex:1;"></el-input>
@@ -23,14 +25,21 @@
             ></el-option>
           </el-select>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-row class="flex">
         <div class="center">发起人：</div>
         <el-input class="inp2" v-model="form.date.createUserId"></el-input>
       </el-row>
       <el-row class="flex">
         <div class="center">开始时间：</div>
-        <el-date-picker class="inp2" v-model="form.date.startDate" type="date" placeholder="选择日期"></el-date-picker>
+        <el-date-picker
+          class="inp2"
+          v-model="form.date.startDate"
+          type="date"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          format="yyyy-MM-dd HH:mm:ss"
+          placeholder="选择日期"
+        ></el-date-picker>
       </el-row>
       <el-row class="flex">
         <div class="center">资料名称：</div>
@@ -42,33 +51,57 @@
       </el-row>
       <el-row class="flex">
         <div class="center">结束时间：</div>
-        <el-date-picker class="inp2" v-model="form.date.endDate" type="date" placeholder="选择日期"></el-date-picker>
+        <el-date-picker
+          class="inp2"
+          v-model="form.date.endDate"
+          type="date"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          format="yyyy-MM-dd HH:mm:ss"
+          placeholder="选择日期"
+        ></el-date-picker>
       </el-row>
-      <el-row class="flex" style="height: 118px;">
-        <div class="center" style="height: 100%;padding: 0 10px;">内容概要：</div>
+      <el-row class="flex" style="height: 118px">
+        <div class="center" style="height: 100%; padding: 0 10px">
+          内容概要：
+        </div>
         <el-input
           type="textarea"
           v-model="form.date.contentSum"
-          style="flex:1;height: 100%;border-left: 1px solid #000;"
+          style="flex: 1; height: 100%; border-left: 1px solid #000"
         ></el-input>
       </el-row>
-      <el-row class="flex" style="height: 118px;">
-        <div class="center" style="height: 100%;padding: 0 10px;">备注：</div>
+      <el-row class="flex" style="height: 118px">
+        <div class="center" style="height: 100%; padding: 0 10px">备注：</div>
         <el-input
           type="textarea"
           v-model="form.date.content"
-          style="flex:1;height: 100%;border-left: 1px solid #000;"
+          style="flex: 1; height: 100%; border-left: 1px solid #000"
         ></el-input>
       </el-row>
-      <el-row class="flex" style="height: 124px;">
+      <el-row class="flex" style="height: 124px">
         <div
           class="center"
-          style="width: 101px;height: 100%;padding: 0 10px;border-right: 1px solid #000;"
-        >附件：</div>
-        <el-col style="flex:1;height: 100%;">
+          style="
+            width: 101px;
+            height: 100%;
+            padding: 0 10px;
+            border-right: 1px solid #000;
+          "
+        >
+          附件：
+        </div>
+        <el-col
+          style="
+            flex: 1;
+            height: 100%;
+            border: 1px solid #000;
+            border-top: 0;
+            border-left: 0;
+          "
+        >
           <el-upload
             class="avatar-uploader"
-            style="height: 70%;"
+            style="height: 70%"
             ref="upload"
             :action="$api.upload"
             :limit="1"
@@ -80,7 +113,10 @@
         </el-col>
       </el-row>
     </div>
-    <v-opinion v-if="$store.state.tableName" :list="opinionList"></v-opinion>
+    <v-opinion
+      v-if="examineList !== undefined && examineList.length > 0"
+      :list="opinionList"
+    ></v-opinion>
   </div>
 </template>
 
@@ -96,15 +132,17 @@ export default {
       form: {
         formId: "1301278198353408000",
         date: {
-          urgencyDegree: "1",
+          modelId: "352501",
         },
       },
       fileList: [],
       opinionList: [],
-       comformInfo: {
+      comformInfo: {
         formId: "1301278198353408000",
         id: "",
       },
+      examineList: [],
+      processList: [],
     };
   },
   watch: {},
@@ -114,16 +152,66 @@ export default {
       this.$api.base
         .item({ comformInfo: JSON.stringify(this.comformInfo) })
         .then((res) => {
-          this.form = res;
-          console.log(this.form);
-          this.$store.commit("GET_FROM", this.form);
+          this.init(res);
         });
     } else {
       console.log(1);
+      this.form.date.createBy = JSON.parse(
+        JSON.parse(localStorage.vuex).loginList
+      ).id;
       this.$store.commit("GET_FROM", this.form);
+      this.$store.commit("SET_PROCESSLIST", []);
     }
   },
   methods: {
+    init(data) {
+      let one = {
+        pageNumber: 1,
+        pageSize: 10000,
+      };
+      let two = {
+        businessKey: sessionStorage.tableId,
+      };
+      this.$api.process
+        .getthisprocess(one, two)
+        .then((res) => {
+          if (res.count > 0) {
+            this.processList = res.data;
+            console.log(this.processList[0].serialNumber);
+            this.form.date.serialNumber = this.processList[0].serialNumber;
+            this.form.date.urgencyDegree = this.processList[0].urgencyDegree;
+            this.$store.commit("SET_PROCESSLIST", res.data);
+          }
+          this.form = data;
+          if (
+            this.form.date.activityStartDate == null ||
+            this.form.date.activityEndDate == null
+          ) {
+            this.date = [];
+          } else {
+            this.date.push(this.form.date.activityStartDate);
+            this.date.push(this.form.date.activityEndDate);
+          }
+          console.log(this.form);
+          if (this.form.date.attachId) {
+            let one = this.form.date.attachId.split("|");
+            let file = {
+              name: one[0],
+              url: one[1],
+            };
+            this.fileList.push(file);
+          }
+          console.log(one);
+          this.form.date.modelId = "352501";
+          this.form.date.show = true;
+          this.form.date.urgencyDegree = "1";
+          console.log(this.form);
+          this.$store.commit("GET_FROM", this.form);
+        })
+        .catch((error) => {
+          this.$message.error("失败！");
+        });
+    },
     getFile() {
       let files = this.$refs.upload.uploadFiles;
       let fileArr = [];
@@ -228,9 +316,12 @@ export default {
   }
 
   .avatar-uploader {
-    border: 1px solid #000;
-    border-top: 0;
-    border-left: 0;
+    // border: 1px solid #000;
+    // border-top: 0;
+    // border-left: 0;
+    /deep/ .is-success {
+      margin-top: 5px;
+    }
 
     /deep/ .el-upload {
       border: 1px dashed #d9d9d9;

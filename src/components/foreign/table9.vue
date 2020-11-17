@@ -1,13 +1,15 @@
 <template>
   <div class="details">
     <div class="table">
-      <el-row style="text-align: left;padding: 20px;border-right: 1px solid #000;">
+      <el-row
+        style="text-align: left; padding: 20px; border-right: 1px solid #000"
+      >
         <img src="../../common/images/logo.jpg" />
       </el-row>
       <el-row>
         <h2>广东外语外贸大学教育合作涉外协议签署审批表</h2>
       </el-row>
-      <el-row>
+      <!-- <el-row>
         <el-col :span="12" class="flex">
           <div class="center">流水号</div>
           <el-input v-model="form.date.serialNumber" disabled style="flex:1;"></el-input>
@@ -23,16 +25,16 @@
             ></el-option>
           </el-select>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-row class="flex">
         <div class="center">申报单位：</div>
-        <el-input v-model="form.date.applyUnit" style="flex:1;"></el-input>
+        <el-input v-model="form.date.applyUnit" style="flex: 1"></el-input>
       </el-row>
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">申报时间：</div>
           <el-date-picker
-            style="flex:1;"
+            style="flex: 1"
             value-format="yyyy-MM-dd"
             format="yyyy-MM-dd"
             v-model="form.date.applyDate"
@@ -42,24 +44,24 @@
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">协议类型：</div>
-          <el-input v-model="form.date.protocolType" style="flex:1;"></el-input>
+          <el-input v-model="form.date.protocolType" style="flex: 1"></el-input>
         </el-col>
       </el-row>
       <el-row class="flex">
         <div class="center">协议名称：</div>
-        <el-input v-model="form.date.protocolName" style="flex:1;"></el-input>
+        <el-input v-model="form.date.protocolName" style="flex: 1"></el-input>
       </el-row>
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">合作高校：</div>
-          <el-input v-model="form.date.school" style="flex:1;"></el-input>
+          <el-input v-model="form.date.school" style="flex: 1"></el-input>
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">是否已签署：</div>
           <el-radio-group
             v-model="form.date.isSign"
             class="redio_flex"
-            style="height: 32px;flex:1;"
+            style="height: 32px; flex: 1"
           >
             <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
@@ -72,7 +74,7 @@
           <el-radio-group
             v-model="form.date.signType"
             class="redio_flex"
-            style="height: 32px;flex:1;"
+            style="height: 32px; flex: 1"
           >
             <el-radio label="1">现场签署</el-radio>
             <el-radio label="2">寄签</el-radio>
@@ -80,28 +82,36 @@
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">所需协议份数：</div>
-          <el-input v-model="form.date.protocolNum" @input="numValid" style="flex:1;"></el-input>
+          <el-input
+            v-model="form.date.protocolNum"
+            @input="numValid"
+            style="flex: 1"
+          ></el-input>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">经办人：</div>
-          <el-input v-model="form.date.applyUser" style="flex:1;"></el-input>
+          <el-input v-model="form.date.applyUser" style="flex: 1"></el-input>
         </el-col>
         <el-col :span="12" class="flex">
-          <div :class="['center', {star: star.phone}]">联系电话：</div>
+          <div :class="['center', { star: star.phone }]">联系电话：</div>
           <el-input
-            :class="[{border: border.phone}]"
+            :class="[{ border: border.phone }]"
             @change="phone"
             v-model="form.date.phone"
-            style="flex:1;"
+            style="flex: 1"
           ></el-input>
         </el-col>
       </el-row>
       <el-row>
         <p class="p1">内容摘要：</p>
         <p class="p1">（请简要概况本协议核心内容）</p>
-        <el-input type="textarea" v-model="form.date.content" style="height: 118px;"></el-input>
+        <el-input
+          type="textarea"
+          v-model="form.date.content"
+          style="height: 118px"
+        ></el-input>
       </el-row>
       <!-- <el-row style="border-bottom: 1px solid #000;">
         <p class="p1">单位领导审批意见（签字、盖章）：</p>
@@ -156,7 +166,7 @@
 import Opinion from "@/views/picture/opinion";
 export default {
   name: "Details",
-   components: {
+  components: {
     "v-opinion": Opinion,
   },
   data() {
@@ -164,7 +174,7 @@ export default {
       form: {
         formId: "1300535036409249792",
         date: {
-          urgencyDegree: "1",
+          modelId: "287501",
         },
       },
       border: {
@@ -182,21 +192,52 @@ export default {
   },
   watch: {},
   created() {
-     if (this.$store.state.tableName === "港澳台教师聘用流程") {
+    if (this.$store.state.tableName === "港澳台教师聘用流程") {
       this.comformInfo.id = sessionStorage.tableId;
       this.$api.base
         .item({ comformInfo: JSON.stringify(this.comformInfo) })
         .then((res) => {
-          this.form = res;
-          console.log(this.form);
-          this.$store.commit("GET_FROM", this.form);
+          this.init(res);
         });
     } else {
       console.log(1);
+      this.form.date.createBy = JSON.parse(
+        JSON.parse(localStorage.vuex).loginList
+      ).id;
       this.$store.commit("GET_FROM", this.form);
+      this.$store.commit("SET_PROCESSLIST", []);
     }
   },
   methods: {
+    init(data) {
+      let one = {
+        pageNumber: 1,
+        pageSize: 10000,
+      };
+      let two = {
+        businessKey: sessionStorage.tableId,
+      };
+      this.$api.process
+        .getthisprocess(one, two)
+        .then((res) => {
+          this.form = data;
+          this.form.date.modelId = "287501";
+          this.form.date.show = true;
+          this.form.date.urgencyDegree = "1";
+          if (res.count > 0) {
+            this.processList = res.data;
+            console.log(this.processList[0].serialNumber);
+            this.form.date.serialNumber = this.processList[0].serialNumber;
+            this.form.date.urgencyDegree = this.processList[0].urgencyDegree;
+            this.$store.commit("SET_PROCESSLIST", res.data);
+          }
+          console.log(this.form);
+          this.$store.commit("GET_FROM", this.form);
+        })
+        .catch((error) => {
+          this.$message.error("失败！");
+        });
+    },
     numValid() {
       if (this.form.date.protocolNum) {
         this.form.date.protocolNum = this.form.date.protocolNum.replace(

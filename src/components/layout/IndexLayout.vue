@@ -230,7 +230,6 @@ export default {
           .then(() => {
             this.$api.logout().then((res) => {
               this.$store.commit("SET_LAYOUT", "");
-              sessionStorage.clear();
               this.$message({
                 type: "success",
                 message: "退出成功!",

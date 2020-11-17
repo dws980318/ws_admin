@@ -7,16 +7,17 @@ const service = axios.create({
   timeout: 10000 // 请求超时时间
 })
 
-service.defaults.baseURL = 'http://192.168.0.109:8081'
-// service.defaults.baseURL = 'http://193/112.76.40:7071'
+service.defaults.baseURL = 'http://192.168.0.195:8081'
+// service.defaults.baseURL = 'http://192.168.0.104:8081'
+// service.defaults.baseURL = 'http://193.112.76.40:7071'
 service.defaults.withCredentials = true
 
 // 添加request拦截器
 service.interceptors.request.use(config => {
+  // console.log(config)
   if (sessionStorage.token) {
     config.headers.Authorization = sessionStorage.token
   }
-  console.log()
   return config
 }, error => {
   Promise.reject(error)
@@ -87,7 +88,11 @@ export function get(url, params = {}) {
 //封装form-data请求
 export function form(url, data) {
   const formData = new FormData();
+  // console.log(data)
+  //对象转数组
   Object.keys(data).forEach((key) => {
+    // console.log(key)
+    // console.log(Object.keys(data))
     // 参数为空就后端就失败，只能去掉空值
     if (data[key]) {
       formData.append(key, data[key]);

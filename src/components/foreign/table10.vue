@@ -1,13 +1,15 @@
 <template>
   <div class="details">
     <div class="table">
-      <el-row style="text-align: left;padding: 20px;border-right: 1px solid #000;">
+      <el-row
+        style="text-align: left;padding: 20px;border-right: 1px solid #000;"
+      >
         <img src="@/common/images/logo.jpg" />
       </el-row>
       <el-row>
         <h2>广东外语外贸大学孔子学院经费预算申请表</h2>
       </el-row>
-      <el-row>
+      <!-- <el-row>
         <el-col :span="12" class="flex">
           <div class="center">流水号</div>
           <el-input v-model="form.date.serialNumber" disabled style="flex:1;"></el-input>
@@ -23,7 +25,7 @@
             ></el-option>
           </el-select>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-row>
         <el-col :span="24" class="flex">
           <div class="center">标题</div>
@@ -37,7 +39,11 @@
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">项目属性</div>
-          <el-select v-model="form.date.type" style="flex:1;" placeholder="请选择礼品名称">
+          <el-select
+            v-model="form.date.type"
+            style="flex:1;"
+            placeholder="请选择礼品名称"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -67,7 +73,11 @@
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">参加人数</div>
-          <el-input v-model="form.date.nnt" @input="numValid" style="flex:1;"></el-input>
+          <el-input
+            v-model="form.date.nnt"
+            @input="numValid"
+            style="flex:1;"
+          ></el-input>
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">项目对应人群</div>
@@ -98,17 +108,28 @@
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">支出明细</div>
-          <el-input v-model="form.date.disburseDetail" style="flex:1;"></el-input>
+          <el-input
+            v-model="form.date.disburseDetail"
+            style="flex:1;"
+          ></el-input>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">支出金额</div>
-          <el-input v-model="form.date.disburseAmount" @input="numValid" style="flex:1;"></el-input>
+          <el-input
+            v-model="form.date.disburseAmount"
+            @input="numValid"
+            style="flex:1;"
+          ></el-input>
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">支出总额</div>
-          <el-input v-model="form.date.amount" @input="numValid" style="flex:1;"></el-input>
+          <el-input
+            v-model="form.date.amount"
+            @input="numValid"
+            style="flex:1;"
+          ></el-input>
         </el-col>
       </el-row>
       <!-- <el-row class="flex" style="height: 112px;">
@@ -158,7 +179,10 @@
         </el-col>
       </el-row>-->
     </div>
-    <v-opinion v-if="$store.state.tableName" :list="opinionList"></v-opinion>
+    <v-opinion
+      v-if="examineList !== undefined && examineList.length > 0"
+      :list="opinionList"
+    ></v-opinion>
   </div>
 </template>
 
@@ -167,32 +191,34 @@ import Opinion from "@/views/picture/opinion";
 export default {
   name: "Details",
   components: {
-    "v-opinion": Opinion,
+    "v-opinion": Opinion
   },
   data() {
     return {
       form: {
         formId: "1298703620245856256",
         date: {
-          urgencyDegree: "1",
-        },
+          modelId: "355001"
+        }
       },
       options: [
         {
           value: "1",
-          label: "常规，执行1年及以上",
+          label: "常规，执行1年及以上"
         },
         {
           value: "2",
-          label: "新设项目",
-        },
+          label: "新设项目"
+        }
       ],
       date: [],
       opinionList: [],
       comformInfo: {
         formId: "1298703620245856256",
-        id: "",
+        id: ""
       },
+      processList: [],
+      examineList: []
     };
   },
   watch: {},
@@ -201,21 +227,59 @@ export default {
       this.comformInfo.id = sessionStorage.tableId;
       this.$api.base
         .item({ comformInfo: JSON.stringify(this.comformInfo) })
-        .then((res) => {
-          this.form = res;
-          console.log(this.form);
-          this.$store.commit("GET_FROM", this.form);
+        .then(res => {
+          this.init(res);
         });
     } else {
       console.log(1);
+      this.form.date.createBy = JSON.parse(
+        JSON.parse(localStorage.vuex).loginList
+      ).id;
       this.$store.commit("GET_FROM", this.form);
+      this.$store.commit("SET_PROCESSLIST", []);
     }
   },
   methods: {
+    init(data) {
+      let one = {
+        pageNumber: 1,
+        pageSize: 10000
+      };
+      let two = {
+        businessKey: sessionStorage.tableId
+      };
+      this.$api.process
+        .getthisprocess(one, two)
+        .then(res => {
+          this.form = data;
+          this.date.push(this.form.date.startDate);
+          this.date.push(this.form.date.endDate);
+          this.form.date.modelId = "355001";
+          this.form.date.show = true;
+          this.form.date.urgencyDegree = "1";
+          if (res.count > 0) {
+            this.processList = res.data;
+            console.log(this.processList[0].serialNumber);
+            this.form.date.serialNumber = this.processList[0].serialNumber;
+            this.form.date.urgencyDegree = this.processList[0].urgencyDegree;
+            this.$store.commit("SET_PROCESSLIST", res.data);
+          }
+          console.log(this.form);
+          this.$store.commit("GET_FROM", this.form);
+        })
+        .catch(error => {
+          this.$message.error("失败！");
+        });
+    },
     dateAction() {
       console.log(this.date);
-      this.form.date.startDate = this.date[0];
-      this.form.date.endDate = this.date[1];
+      if (this.date === null) {
+        this.form.date.startDate = "";
+        this.form.date.endDate = "";
+      } else {
+        this.form.date.startDate = this.date[0];
+        this.form.date.endDate = this.date[1];
+      }
     },
     numValid() {
       if (this.form.date.nnt) {
@@ -234,14 +298,14 @@ export default {
     initType() {
       this.$api
         .util()
-        .then((res) => {
+        .then(res => {
           this.form.date.serialCode = res.data;
         })
-        .catch((err) => {
+        .catch(err => {
           this.$message.error("查询失败！");
         });
-    },
-  },
+    }
+  }
 };
 </script>
 

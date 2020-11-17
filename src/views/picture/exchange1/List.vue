@@ -10,7 +10,9 @@
             v-for="(item, index) in list"
             :key="index"
           >
-            <p :class="selectIndex4 === index ? 'active' : ''" v-if="item.show">{{item.title}}</p>
+            <p :class="selectIndex4 === index ? 'active' : ''" v-if="item.show">
+              {{ item.title }}
+            </p>
           </div>
         </div>
       </div>
@@ -30,7 +32,9 @@
             v-for="(item, index) in list3"
             :key="index"
           >
-            <p :class="selectIndex4 === index ? 'active' : ''">{{item.title}}</p>
+            <p :class="selectIndex4 === index ? 'active' : ''">
+              {{ item.title }}
+            </p>
           </div>
         </div>
       </div>
@@ -50,7 +54,9 @@
             v-for="(item, index) in list2"
             :key="index"
           >
-            <p :class="selectIndex4Show === index ? 'active' : ''">{{item.title}}</p>
+            <p :class="selectIndex4Show === index ? 'active' : ''">
+              {{ item.title }}
+            </p>
           </div>
         </div>
       </div>
@@ -71,7 +77,9 @@
             v-for="(item, index) in list4"
             :key="index"
           >
-            <p :class="selectIndex4s === index ? 'active' : ''">{{item.title}}</p>
+            <p :class="selectIndex4s === index ? 'active' : ''">
+              {{ item.title }}
+            </p>
           </div>
         </div>
       </div>
@@ -217,10 +225,16 @@ export default {
     // if (this.$store.state.tabTitle) {
     //   this.num = this.$store.state.tabTitle;
     // }
+    console.log(this.$store.state.form);
+    console.log(this.$store.state.processList);
     if (sessionStorage.selectIndex4Show) {
       this.selectIndex4Show = parseInt(sessionStorage.selectIndex4Show);
     }
-    if (this.$store.state.tableName === "涉外活动申请流程") {
+    if (
+      this.$store.state.tableName === "涉外活动申请流程" &&
+      this.$store.state.processList.length > 0 &&
+      this.$store.state.processList[0].activitiProcess === "005"
+    ) {
       this.list = [
         { title: "申报表", id: "1", show: true },
         { title: "反馈表", id: "2", show: true },

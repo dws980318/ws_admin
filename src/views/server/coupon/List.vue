@@ -12,7 +12,7 @@
     <el-col :span="19" v-show="show">
       <el-row>
         <p class="header_title">流程一览表</p>
-        <div style="width: 100%;height: auto">
+        <div style="width: 100%; height: auto">
           <v-search
             :searchData="URLparams.comformInfo.date"
             :searchShow="searchShow"
@@ -25,13 +25,13 @@
           <el-table
             :data="tableData"
             border
-            :header-cell-style="{background:'#fafafa',color:'#E3853A'}"
+            :header-cell-style="{ background: '#fafafa', color: '#E3853A' }"
             v-loading="loading"
             style="width: 100%"
           >
             <!-- <el-table-column fixed="left" type="selection" align="center" width="55"></el-table-column> -->
             <el-table-column
-              v-for="(item, index) in tabList"
+              v-for="(item, index) in tabList"
               :key="index + Math.random()"
               :prop="item.value"
               :label="item.name"
@@ -46,18 +46,26 @@
               >
               </el-table-column>-->
             </el-table-column>
-            <el-table-column label="操作" fixed="right" width="160" align="center">
+            <el-table-column
+              label="操作"
+              fixed="right"
+              width="160"
+              align="center"
+            >
               <template slot-scope="scope">
                 <el-button
                   size="mini"
                   type="primary"
                   @click="handleEdit(scope.$index, scope.row)"
-                >编辑</el-button>
+                  >编辑</el-button
+                >
                 <el-button
                   size="mini"
                   type="danger"
+                  v-if="scope.row.createBy === userList.id"
                   @click="handleDelete(scope.$index, scope.row.id)"
-                >删除</el-button>
+                  >删除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
@@ -80,7 +88,7 @@
         </span>
       </el-dialog>
       <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
-        <p style="font-size: 20px;">点击确定将删除该条数据</p>
+        <p style="font-size: 20px">点击确定将删除该条数据</p>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="dialogDelete">确 定</el-button>
@@ -110,14 +118,14 @@ import Search from "./search";
 export default {
   name: "List",
   components: {
-    "v-search": Search,
+    "v-search": Search
   },
   data() {
     return {
       data: dataPower,
       defaultProps: {
         children: "children",
-        label: "label",
+        label: "label"
       },
       title: "内容",
       visible: false,
@@ -134,7 +142,7 @@ export default {
               const start = new Date();
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit("pick", [start, end]);
-            },
+            }
           },
           {
             text: "最近一个月",
@@ -143,7 +151,7 @@ export default {
               const start = new Date();
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit("pick", [start, end]);
-            },
+            }
           },
           {
             text: "最近三个月",
@@ -152,15 +160,15 @@ export default {
               const start = new Date();
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
               picker.$emit("pick", [start, end]);
-            },
-          },
-        ],
+            }
+          }
+        ]
       },
       state_list: {
         1: "因公出台流程1",
         0: "因公出台流程2",
         2: "因公出国类型1",
-        3: "因公出国类型2",
+        3: "因公出国类型2"
       },
       selection: [],
       tableData: [], // 用于存放数据
@@ -169,10 +177,10 @@ export default {
         title: "",
         status: "",
         delStatus: "1",
-        typeId: "",
+        typeId: ""
       },
       page: {
-        total: 0,
+        total: 0
       },
       URLparams: {
         pageNumber: 1,
@@ -183,22 +191,22 @@ export default {
           mainformdates: [
             {
               formId: "",
-              date: {},
+              date: {}
             },
             {
               formId: "",
-              date: {},
+              date: {}
             },
             {
               formId: "",
-              date: {},
+              date: {}
             },
             {
               formId: "",
-              date: {},
-            },
-          ],
-        },
+              date: {}
+            }
+          ]
+        }
       },
       show: false,
       tabList: [],
@@ -207,10 +215,13 @@ export default {
       tableName: "",
       powerList: [],
       searchShow: "",
+      processList: [],
+      userList: {}
     };
   },
   created() {
     this.powerList = JSON.parse(JSON.parse(localStorage.vuex).powerList).list;
+    this.userList = JSON.parse(JSON.parse(localStorage.vuex).loginList);
   },
   methods: {
     a(row) {
@@ -345,11 +356,11 @@ export default {
       console.log(this.one);
       this.$api.base
         .list(this.one)
-        .then((res) => {
+        .then(res => {
           this.tableData = res.data;
           this.page.total = res.count;
         })
-        .catch((error) => {
+        .catch(error => {
           this.$message.error("查询失败！");
         });
     },
@@ -373,11 +384,17 @@ export default {
     handleEdit(index, row) {
       sessionStorage.tableId = row.id;
       console.log(row);
-      
+
       for (let i in this.powerList) {
         if (this.powerList[i].menuName === this.tableName) {
           this.$store.commit("GET_COMMONSHOW", true);
           this.$store.commit("GET_TABLENAME", this.powerList[i].menuName);
+          let form = {
+            date: {
+              show: true
+            }
+          };
+          this.$store.commit("GET_FROM", form);
           if (this.powerList[i].num) {
             sessionStorage.num = this.powerList[i].num;
           }
@@ -414,19 +431,41 @@ export default {
       this.ids = id;
     },
     dialogDelete() {
+      let one = {
+        pageNumber: 1,
+        pageSize: 10000
+      };
+      let two = {
+        businessKey: this.ids
+      };
+      // debugger;
+      this.$api.process
+        .getthisprocess(one, two)
+        .then(res => {
+          if (res.count > 0) {
+            this.$message.error("点击编辑进入流程可删除！");
+          } else {
+            this.deleteAction();
+          }
+        })
+        .catch(error => {
+          this.$message.error("失败！");
+        });
+    },
+    deleteAction() {
       let one = this.deepClone(this.URLparams);
       let two = one.comformInfo;
       two.date = "";
       two.date = this.ids;
       two = JSON.stringify(two);
       console.log(two);
-      this.$api.base.delete({ comformInfo: two }).then((res) => {
+      this.$api.base.delete({ comformInfo: two }).then(res => {
         this.$message.success(res.message);
         this.dialogVisible = false;
         this.init();
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -541,4 +580,3 @@ export default {
   border-bottom: 1px solid;
 }
 </style>
-

@@ -5,10 +5,42 @@
     </el-col>
     <el-col :span="18">
       <div class="btn_right">
-        <el-button class="btn" plain @click="nextAction()">转下一步</el-button>
-        <el-button type="success" plain @click="saveAction()">保存</el-button>
+        <el-button
+          class="back"
+          plain
+          :disabled="
+            ($store.state.processList.length > 0 &&
+              $store.state.processList[0].activitiStatus === '005') ||
+            ($store.state.processList.length > 0 &&
+              $store.state.processList[0].disposeUserId !== userList.id) ||
+            ($store.state.processList.length == 0 &&
+              $store.state.form.date.createBy !== userList.id)
+              ? true
+              : false
+          "
+          @click="nextAction()"
+          >转下一步</el-button
+        >
+        <el-button
+          type="success"
+          plain
+          :disabled="
+            ($store.state.processList.length > 0 &&
+              $store.state.processList[0].activitiStatus === '005') ||
+            ($store.state.processList.length > 0 &&
+              $store.state.form.date.createBy !== userList.id &&
+              $store.state.processList[0].disposeUserId !== userList.id) ||
+            ($store.state.processList.length == 0 &&
+              $store.state.form.date.createBy !== userList.id) || show
+              ? true
+              : false
+          "
+          @click="saveAction()"
+          >保存</el-button
+        >
         <el-button type="info" plain @click="printAction()">打印</el-button>
         <el-button type="warning" plain>导出</el-button>
+        <!-- <el-button class="back" plain>回退</el-button> -->
       </div>
     </el-col>
     <el-dialog
@@ -29,6 +61,7 @@
       <img v-show="flow === '孔子学院'" src="@/common/images/flow10.png" alt />
       <img v-show="flow === '预算申请'" src="@/common/images/flow11.png" alt />
       <img v-show="flow === '决算申请'" src="@/common/images/flow12.png" alt />
+      <img v-show="flow === '资料报送'" src="@/common/images/flow13.png" alt />
       <!-- <div class="list_box">
         <div class="circle"></div>
         <div
@@ -90,6 +123,27 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="流水号" prop="age">
+          <el-input
+            v-model="ruleForm.serialNumber"
+            disabled
+            style="flex: 1"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="紧急程度" prop="urgencyDegree">
+          <el-select
+            v-model="ruleForm.urgencyDegree"
+            style="flex: 1"
+            placeholder="请选择紧急程度"
+          >
+            <el-option
+              v-for="item in $baseUrl.degreeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="意见" prop="name">
           <el-input
             type="textarea"
@@ -124,25 +178,30 @@ export default {
         { title: "国际处审核" },
         { title: "国际处交流科职员初审" },
         { title: "国际处分管副处长审批" },
-        { title: "国际处处长审批" },
+        { title: "国际处处长审批" }
         // { title: "归档" }
       ],
       ruleForm: {
         value: "",
         age: "",
-        content: "审批通过！",
+        content: "审批通过！"
       },
       flow: "",
       show: false,
       form: {},
       formrules: {
         value: [
-          { required: true, message: "请选择下一节点", trigger: "change" },
+          { required: true, message: "请选择下一节点", trigger: "change" }
         ],
+        urgencyDegree: [
+          { required: true, message: "请选择紧急程度", trigger: "change" }
+        ]
       },
+      saveShow: false,
       options: [],
       options2: [],
       taskId: "",
+      userList: {}
     };
   },
   mounted() {
@@ -155,12 +214,14 @@ export default {
         console.log(oldval); //老路由信息
       },
       // 深度观察监听
-      deep: true,
-    },
+      deep: true
+    }
   },
   created() {
-    console.log(this.$route);
+    console.log(this.$store.state.processList);
     this.flow = this.whatFood(this.$route.path);
+    console.log();
+    this.userList = JSON.parse(JSON.parse(localStorage.vuex).loginList);
   },
   methods: {
     whatFood(mealtime) {
@@ -202,6 +263,9 @@ export default {
         case "/picture/foreign1/8":
           food = "决算申请";
           break;
+          case "/picture/exchange1/5":
+          food = "资料报送";
+          break;
         default:
           food = "";
       }
@@ -233,78 +297,84 @@ export default {
       }
     },
     confirmAction() {
-      this.$refs["ruleForm"].validate((valid) => {
+      this.$refs["ruleForm"].validate(valid => {
         if (valid) {
           let one = {
+            taskId: this.taskId,
             Assignee: this.ruleForm.age,
             nextNode: this.ruleForm.value,
             comformInfo: JSON.stringify(this.$store.state.form),
-            comformId: this.$store.state.form.date.formId,
-            businessKey: "",
+            comformId: this.$store.state.form.formId,
+            businessKey: this.$store.state.form.date.id,
             modelId: this.$store.state.form.date.modelId,
             opinion: this.ruleForm.content,
-            serialNumber: this.$store.state.form.date.serialNumber,
-            urgencyDegree: this.$store.state.form.date.urgencyDegree,
+            serialNumber: this.ruleForm.serialNumber,
+            urgencyDegree: this.ruleForm.urgencyDegree
           };
           this.$api.process
             .completeTask(one)
-            .then((res) => {
+            .then(res => {
               if (res.status === 200) {
                 this.$message.success("成功！");
                 this.nextShow = false;
+                // this.taskId = res.data.taskId;
+                this.one();
+              } else {
+                this.$message.error(res.message);
               }
             })
-            .catch((error) => {
+            .catch(error => {
               this.loading = false;
               this.$message.error("失败！");
             });
         }
       });
     },
+    serialInit() {
+      this.$api.util().then(res => {
+        this.ruleForm.serialNumber = res.data;
+      });
+    },
     nextAction() {
       console.log(this.$store.state.form);
       if (this.$store.state.processList.length > 0) {
-        // let one = {
-        //   businessKey: this.form.businessKey,
-        //   modelId: this.form.modelId,
-        // }
-        let one = {
-          taskId: this.taskId,
-          businessKey: this.$store.state.form.formId,
-          modelId: this.$store.state.form.date.modelId,
-        };
-        this.$api.process.getnextnode(one).then((res) => {
-          // this.ruleForm = res.data
-          this.options = res;
-        });
-        this.nextShow = true;
+        console.log(1);
+        this.taskId = this.$store.state.processList[0].taskId;
+        this.ruleForm.serialNumber = this.$store.state.processList[0].serialNumber;
+        this.ruleForm.urgencyDegree = this.$store.state.processList[0].urgencyDegree;
+        this.getnodeAction();
       } else if (this.show || this.$store.state.form.date.show) {
-        let one = {
-          businessKey: this.$store.state.form.formId,
-          modelId: this.$store.state.form.date.modelId,
-        };
-        this.$api.process.getnextnode(one).then((res) => {
-          // this.ruleForm = res.data
-          this.options = res;
-        });
-        this.nextShow = true;
+        console.log(2);
+        this.serialInit();
+        this.getnodeAction();
       } else {
         this.$message.error("请先点击保存！");
       }
+    },
+    getnodeAction() {
+      let one = {
+        taskId: this.taskId,
+        businessKey: this.$store.state.form.date.id,
+        modelId: this.$store.state.form.date.modelId
+      };
+      this.$api.process.getnextnode(one).then(res => {
+        this.options = res;
+      });
+      this.nextShow = true;
     },
     saveAction() {
       console.log(this.$store.state.form);
       if (this.$store.state.tableName) {
         this.$api.base
           .edit({ comformInfo: JSON.stringify(this.$store.state.form) })
-          .then((res) => {
+          .then(res => {
             if (res.status === 200) {
-              // this.show = true;
+              this.$message.success(res.message);
+            } else {
+              this.$message.error(res.message);
             }
-            this.$message.success(res.message);
-            // this.$router.back();
           })
-          .catch((error) => {
+          .catch(error => {
             this.$message.error(res.message);
           });
       } else {
@@ -324,20 +394,45 @@ export default {
         //     this.loading = false;
         //     this.$message.error('保存失败！');
         //   });
+        this.$store.commit("SET_PROCESSLIST", []);
         this.$api.base
           .add({ comformInfo: JSON.stringify(this.$store.state.form) })
-          .then((res) => {
+          .then(res => {
             if (res.status === 200) {
               this.show = true;
+              this.$store.state.form.date.id = res.data;
+              this.$store.commit("GET_FROM", this.$store.state.form);
               this.$message.success(res.message);
+            } else {
+              this.$message.error(res.message);
             }
           })
-          .catch((error) => {
+          .catch(error => {
             this.$message.error(res.message);
           });
       }
     },
-  },
+    one() {
+      let one = {
+        pageNumber: 1,
+        pageSize: 10000
+      };
+      let two = {
+        businessKey: sessionStorage.tableId
+      };
+      this.$api.process
+        .getthisprocess(one, two)
+        .then(res => {
+          if (res.count > 0) {
+            this.$store.commit("SET_PROCESSLIST", res.data);
+          }
+          console.log(this.form);
+        })
+        .catch(error => {
+          this.$message.error("失败！");
+        });
+    }
+  }
 };
 </script>
 
@@ -400,7 +495,7 @@ img {
   width: 100%;
 }
 
-.btn {
+.back {
   color: #409eff;
   background: #ecf5ff;
   border-color: #b3d8ff;

@@ -9,7 +9,7 @@
       <el-row>
         <h2>广东外语外贸大学涉外活动申请表</h2>
       </el-row>
-      <el-row>
+      <!-- <el-row>
         <el-col :span="12" class="flex">
           <div class="center">流水号</div>
           <el-input
@@ -33,7 +33,7 @@
             ></el-option>
           </el-select>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-row class="flex">
         <el-col :span="12" class="flex">
           <div class="center">申报单位</div>
@@ -470,7 +470,10 @@
         </el-col>
       </el-row>
     </div>
-    <v-opinion v-if="processList !== undefined && processList.length > 0" :list="opinionList"></v-opinion>
+    <v-opinion
+      v-if="examineList !== undefined && examineList.length > 0"
+      :list="opinionList"
+    ></v-opinion>
 
     <div class="common">
       <v-table11 :tableData="list"></v-table11>
@@ -529,130 +532,132 @@ export default {
   components: {
     "v-table11": Table11,
     "v-table12": Table12,
-    "v-opinion": Opinion,
+    "v-opinion": Opinion
   },
   data() {
     return {
       form: {
         formId: "1301554539758166016",
         date: {
-          urgencyDegree: "1",
           modelId: "10002",
-        },
+        }
+        // mainformdates: [
+        // ],
       },
       options: [
         {
           value: "1",
-          label: "是",
+          label: "是"
         },
         {
           value: "0",
-          label: "否",
-        },
+          label: "否"
+        }
       ],
       opinionList: [
         { title: "交流科工作人员确认", approver: "审批人", date: "审批时间" },
         {
           title: "学院主要负责人审批书记或院长）",
           approver: "审批人",
-          date: "审批时间",
+          date: "审批时间"
         },
         { title: "国际处交流科职员初审", approver: "审批人", date: "审批时间" },
         { title: "国际处交流科科长审批", approver: "审批人", date: "审批时间" },
         { title: "国际处分管副处长审批", approver: "审批人", date: "审批时间" },
-        { title: "国际处处长审批", approver: "审批人", date: "审批时间" },
+        { title: "国际处处长审批", approver: "审批人", date: "审批时间" }
       ],
       cities: [
         {
           title:
             "一般性交流活动（不涉及外国驻华使领馆/台湾人士/粤港澳大湾区主题等）",
-          id: 1,
+          id: 1
         },
         {
           title: "一般性交流活动（涉外国驻华使领馆人员）",
-          id: 2,
+          id: 2
         },
         {
           title: "一般性交流活动（涉及台湾人士）",
-          id: 3,
+          id: 3
         },
         {
           title: "一般性交流活动（涉及粤港澳大湾区主题）",
-          id: 4,
+          id: 4
         },
         {
           title: "一般性交流活动（涉及非政府组织）",
-          id: 5,
+          id: 5
         },
         {
           title: "文化类活动",
-          id: 6,
+          id: 6
         },
         {
           title: "双边会议",
-          id: 7,
+          id: 7
         },
         {
           title: "国际会议",
-          id: 8,
+          id: 8
         },
         {
           title: "涉外讲座",
-          id: 9,
+          id: 9
         },
         {
           title: "其他",
-          id: 10,
-        },
+          id: 10
+        }
       ],
       list: [
         {
           roleCode: "身份证",
           roleName: "张三身份证",
-          remark: "500kb",
-        },
+          remark: "500kb"
+        }
       ],
       opinionList: [
         {
           name1: "可以，通过",
           name2: "李子柒",
           name3: "书记审批",
-          name4: "2020-09-08",
+          name4: "2020-09-08"
         },
         {
           name1: "内容详细，符合因公出国流程，通过",
           name2: "王小二",
           name3: "国际处外专科科长审批",
-          name4: "2020-09-09",
+          name4: "2020-09-09"
         },
         {
           name1: "符合要求，通过",
           name2: "刘大伟",
           name3: "国际处处长",
-          name4: "2020-09-10",
+          name4: "2020-09-10"
         },
         {
           name1: "符合要求，确认通过",
           name2: "赵华光",
           name3: "外专科工作人员",
-          name4: "2020-09-11",
-        },
+          name4: "2020-09-11"
+        }
       ],
       bookShow: true,
       border: {
         phone: false,
-        phoneCall: false,
+        phoneCall: false
       },
       star: {
         phone: true,
-        phoneCall: true,
+        phoneCall: true
       },
       date: [],
       comformInfo: {
         formId: "1301554539758166016",
-        id: "",
+        id: ""
       },
-      processList: []
+      processList: [],
+      examineList: []
     };
   },
   watch: {
@@ -661,7 +666,7 @@ export default {
       console.log(oldVal);
       if (val && val !== oldVal) {
       }
-    },
+    }
   },
   created() {
     console.log(this.form);
@@ -669,8 +674,40 @@ export default {
       this.comformInfo.id = sessionStorage.tableId;
       this.$api.base
         .item({ comformInfo: JSON.stringify(this.comformInfo) })
-        .then((res) => {
-          this.form = res;
+        .then(res => {
+          this.init(res);
+        });
+    } else {
+      console.log(this.form);
+      // this.serialInit();
+      this.form.date.createBy = JSON.parse(
+        JSON.parse(localStorage.vuex).loginList
+      ).id;
+      this.$store.commit("GET_FROM", this.form);
+      this.$store.commit("SET_PROCESSLIST", []);
+    }
+  },
+  methods: {
+    init(data) {
+      let one = {
+        pageNumber: 1,
+        pageSize: 10000
+      };
+      let two = {
+        businessKey: sessionStorage.tableId
+      };
+      this.$api.process
+        .getthisprocess(one, two)
+        .then(res => {
+          if (res.count > 0) {
+            this.bookShow = false;
+            this.processList = res.data;
+            console.log(this.processList[0].serialNumber);
+            this.form.date.serialNumber = this.processList[0].serialNumber;
+            this.form.date.urgencyDegree = this.processList[0].urgencyDegree;
+            this.$store.commit("SET_PROCESSLIST", res.data);
+          }
+          this.form = data;
           if (
             this.form.date.activityStartDate == null ||
             this.form.date.activityEndDate == null
@@ -684,42 +721,27 @@ export default {
           this.form.date.modelId = "10002";
           this.form.date.show = true;
           this.form.date.urgencyDegree = "1";
+          console.log(this.form);
           this.$store.commit("GET_FROM", this.form);
-        });
-      let one = {
-        pageNumber: 1,
-        pageSize: 10000,
-      };
-      let two = {
-        businessKey: sessionStorage.tableId,
-      };
-      this.$api.process
-        .getthisprocess(one, two)
-        .then((res) => {
-          if (res.count > 0) {
-            this.processList = res.data;
-            this.$store.commit("SET_PROCESSLIST", res.data);
-          }
         })
-        .catch((error) => {
+        .catch(error => {
           this.$message.error("失败！");
         });
-    } else {
-      console.log(1);
-      this.serialInit();
-      this.$store.commit("GET_FROM", this.form);
-    }
-  },
-  methods: {
+    },
     serialInit() {
-      this.$api.util().then((res) => {
+      this.$api.util().then(res => {
         this.form.date.serialNumber = res.data;
       });
     },
     dateAction() {
       console.log(this.date);
-      this.form.date.activityStartDate = this.date[0];
-      this.form.date.activityEndDate = this.date[1];
+      if (this.date === null) {
+        this.form.date.activityStartDate = "";
+        this.form.date.activityEndDate = "";
+      } else {
+        this.form.date.activityStartDate = this.date[0];
+        this.form.date.activityEndDate = this.date[1];
+      }
     },
     bookShowAction() {
       this.bookShow = false;
@@ -736,8 +758,8 @@ export default {
             roleCode: "身份证",
             roleName: "张三身份证",
             remark: "500kb",
-            content: "chart_01",
-          },
+            content: "chart_01"
+          }
         ];
       } else if (this.form.date.activityType === 2) {
         this.list = [
@@ -745,8 +767,8 @@ export default {
             roleCode: "word、pdf",
             roleName: "涉及演讲或讲座须上传演讲稿或提纲",
             remark: "500kb",
-            content: "chart_02",
-          },
+            content: "chart_02"
+          }
         ];
       } else if (this.form.date.activityType === 3) {
         this.list = [
@@ -754,8 +776,8 @@ export default {
             roleCode: "word、pdf",
             roleName: "港澳台人士个人简历",
             remark: "500kb",
-            content: "chart_03",
-          },
+            content: "chart_03"
+          }
         ];
       } else if (this.form.date.activityType === 4) {
         this.list = [
@@ -763,8 +785,8 @@ export default {
             roleCode: "word、pdf",
             roleName: "报批完毕回执扫描件",
             remark: "500kb",
-            content: "chart_04",
-          },
+            content: "chart_04"
+          }
         ];
       } else if (this.form.date.activityType === 5) {
         this.list = [
@@ -772,68 +794,68 @@ export default {
             roleCode: "word、pdf",
             roleName: "外方人员护照信息一览表",
             remark: "500kb",
-            content: "chart_01",
+            content: "chart_01"
           },
           {
             roleCode: "word、pdf",
             roleName: "护照复印件",
             remark: "500kb",
-            content: "chart_03",
+            content: "chart_03"
           },
           {
             roleCode: "word、pdf",
             roleName: "外方人员在华行程",
             remark: "500kb",
-            content: "chart_04",
+            content: "chart_04"
           },
           {
             roleCode: "word、pdf",
             roleName: "演出节目单",
             remark: "500kb",
-            content: "chart_01",
+            content: "chart_01"
           },
           {
             roleCode: "word、pdf",
             roleName: "驻穗领馆照会",
-            remark: "500kb",
-          },
+            remark: "500kb"
+          }
         ];
       } else if (this.form.date.activityType === 6) {
         this.list = [
           {
             roleCode: "word、pdf",
             roleName: "上传会议日程",
-            remark: "500kb",
+            remark: "500kb"
           },
           {
             roleCode: "word、pdf",
             roleName: "境外与会人员名单",
-            remark: "500kb",
+            remark: "500kb"
           },
           {
             roleCode: "word、pdf",
             roleName: "境外发言代表个人简历及发言提纲",
-            remark: "500kb",
-          },
+            remark: "500kb"
+          }
         ];
       } else if (this.form.date.activityType === 7) {
         this.list = [
           {
             roleCode: "word、pdf",
             roleName: "给省外办发文会议日程",
-            remark: "500kb",
+            remark: "500kb"
           },
           {
             roleCode: "word、pdf",
             roleName: "境外与会人员名单",
-            remark: "500kb",
+            remark: "500kb"
           },
           {
             roleCode: "word、pdf",
             roleName: "外发言代表个人简历及发言提纲",
             remark: "500kb",
-            content: "chart_02",
-          },
+            content: "chart_02"
+          }
         ];
       }
     },
@@ -892,8 +914,8 @@ export default {
       } else {
         this.border.phoneCall = false;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

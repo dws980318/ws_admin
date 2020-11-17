@@ -3,7 +3,7 @@
     <div class="bg_layer"></div>
     <h2>广东外语外贸大学外事系统</h2>
     <el-form ref="loginForm" :model="form" :rules="rules" class="login-box">
-      <h3 class="login-title">{{$t('login.system')}}</h3>
+      <h3 class="login-title">{{ $t("login.system") }}</h3>
       <el-form-item prop="username">
         <el-input
           size="small"
@@ -40,7 +40,8 @@
         size="small"
         icon="el-icon-switch-button"
         @click="onSubmit"
-      >{{$t('login.login')}}</el-button>
+        >{{ $t("login.login") }}</el-button
+      >
     </el-form>
   </div>
 </template>
@@ -147,10 +148,10 @@ export default {
   width: 100%;
   height: 100%;
   background-image: '../common/images/login.jpg';
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(10px);
+  // background-size: cover;
+  // background-position: center;
+  // background-repeat: no-repeat;
+  filter: blur(8px);
 }
 
 h2 {
@@ -171,8 +172,7 @@ h2 {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   box-shadow: 0 0 25px #333;
-  background: rgba(255, 255, 255, 1);
-  /* background: rgba(255, 255, 255, 0.7); */
+  background: rgba(255, 255, 255, 1); /* background: rgba(255, 255, 255, 0.7); */
 }
 
 .login-title {
@@ -211,8 +211,7 @@ h2 {
   /* width: 100px; */
   height: 55px;
   line-height: 55px;
-  text-align: center;
-  /* background-color: #97b968; */
+  text-align: center; /* background-color: #97b968; */
   border-radius: 5px;
 }
 </style>

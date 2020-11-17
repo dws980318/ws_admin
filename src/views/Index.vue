@@ -535,7 +535,7 @@ export default {
     },
     init2() {
       this.$api.activitiTask
-        .getcarbonCopy(this.URLparams)
+        .getunderway(this.URLparams)
         .then((res) => {
           if (res.data) {
             this.visitors[1].value = res.count;
@@ -559,7 +559,7 @@ export default {
     },
     init4() {
       this.$api.activitiTask
-        .getinitiate(this.URLparams)
+        .getcarbonCopy(this.URLparams)
         .then((res) => {
           if (res.data) {
             this.visitors[3].value = res.count;
@@ -571,7 +571,7 @@ export default {
     },
     init5() {
       this.$api.activitiTask
-        .getunderway(this.URLparams)
+        .getinitiate(this.URLparams)
         .then((res) => {
           if (res.data) {
             this.visitors[4].value = res.count;

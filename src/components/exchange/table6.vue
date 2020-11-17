@@ -1,13 +1,15 @@
 <template>
   <div class="details">
     <div class="table">
-      <el-row style="text-align: left;padding: 20px;border-right: 1px solid #000;">
+      <el-row
+        style="text-align: left; padding: 20px; border-right: 1px solid #000"
+      >
         <img src="@/common/images/logo.jpg" />
       </el-row>
       <el-row>
         <h2>广东外语外贸大学万人计划学生申请报名表</h2>
       </el-row>
-      <el-row>
+      <!-- <el-row>
         <el-col :span="12" class="flex">
           <div class="center">流水号</div>
           <el-input v-model="form.date.serialNumber" disabled style="flex:1;"></el-input>
@@ -23,11 +25,11 @@
             ></el-option>
           </el-select>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">姓名</div>
-          <el-input v-model="form.date.username" style="flex:1;"></el-input>
+          <el-input v-model="form.date.username" style="flex: 1"></el-input>
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">性别</div>
@@ -41,7 +43,7 @@
         <el-col :span="12" class="flex">
           <div class="center">出生日期</div>
           <el-date-picker
-            style="flex:1;"
+            style="flex: 1"
             value-format="yyyy-MM-dd"
             format="yyyy-MM-dd"
             v-model="form.date.birthday"
@@ -51,12 +53,12 @@
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">宿舍地址</div>
-          <el-input v-model="form.date.cadre" style="flex:1;"></el-input>
+          <el-input v-model="form.date.cadre" style="flex: 1"></el-input>
         </el-col>
       </el-row>
       <el-row class="flex">
         <div class="center">出生地</div>
-        <div style="flex:1;">
+        <div style="flex: 1">
           <v-distpicker
             class="distpicker"
             v-show="true"
@@ -98,31 +100,31 @@
         </div>
       </el-row>
       <el-row class="flex">
-        <div :class="['center', {star: star.identity}]">身份证号</div>
+        <div :class="['center', { star: star.identity }]">身份证号</div>
         <el-input
-          :class="[{border: border.identity}]"
+          :class="[{ border: border.identity }]"
           v-model="form.date.politics"
           @change="identity"
-          style="flex:1;"
+          style="flex: 1"
         ></el-input>
       </el-row>
       <el-row>
         <el-col :span="12" class="flex">
-          <div :class="['center', {star: star.phone}]">移动电话</div>
+          <div :class="['center', { star: star.phone }]">移动电话</div>
           <el-input
-            :class="[{border: border.phone}]"
+            :class="[{ border: border.phone }]"
             @change="phone"
             v-model="form.date.phone"
-            style="flex:1;"
+            style="flex: 1"
           ></el-input>
         </el-col>
         <el-col :span="12" class="flex">
-          <div :class="['center', {star: star.email}]">电子邮箱</div>
+          <div :class="['center', { star: star.email }]">电子邮箱</div>
           <el-input
-            :class="[{border: border.email}]"
+            :class="[{ border: border.email }]"
             @change="email"
             v-model="form.date.email"
-            style="flex:1;"
+            style="flex: 1"
           ></el-input>
         </el-col>
       </el-row>
@@ -137,7 +139,7 @@
               :value="item.value"
             ></el-option>
           </el-select>-->
-          <el-input v-model="form.date.college" style="flex:1;"></el-input>
+          <el-input v-model="form.date.college" style="flex: 1"></el-input>
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">专业</div>
@@ -149,26 +151,35 @@
               :value="item.value"
             ></el-option>
           </el-select>-->
-          <el-input v-model="form.date.profession" style="flex:1;"></el-input>
+          <el-input v-model="form.date.profession" style="flex: 1"></el-input>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">年级</div>
-          <el-input v-model="form.date.grade" style="flex:1;"></el-input>
+          <el-input v-model="form.date.grade" style="flex: 1"></el-input>
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">班级</div>
-          <el-input v-model="form.date.class1" style="flex:1;"></el-input>
+          <el-input v-model="form.date.class1" style="flex: 1"></el-input>
         </el-col>
       </el-row>
       <el-row class="flex">
         <div class="center">申请项目</div>
-        <el-input v-model="form.date.pro" style="flex:1;"></el-input>
+        <el-input v-model="form.date.pro" style="flex: 1"></el-input>
       </el-row>
       <el-row class="flex">
         <div class="center">项目时间</div>
-        <div  class="flex" style="flex:1;height: 32px;border: 1px solid #000;border-top: 0;display:flex;">
+        <div
+          class="flex"
+          style="
+            flex: 1;
+            height: 32px;
+            border: 1px solid #000;
+            border-top: 0;
+            display: flex;
+          "
+        >
           <!-- <el-date-picker class="input1" v-model="form.date.proDate1" type="date" placeholder="选择日期"></el-date-picker>
           <span>至</span>
           <el-date-picker class="input1" v-model="form.date.proDate2" type="date" placeholder="选择日期"></el-date-picker>
@@ -186,18 +197,22 @@
           ></el-date-picker>
           <el-input
             class="input1"
-            style="width: 80px;"
+            style="width: 80px"
             @input="numValid"
             v-model="form.date.dayNum"
           ></el-input>
           <span>天</span>
         </div>
       </el-row>
-      <el-row class="flex" style="height:108px;">
-        <div class="center" style="height: 100%;">学生个人申明</div>
-        <el-col style="flex:1;border-left: 1px solid #000;">
+      <el-row class="flex" style="height: 108px">
+        <div class="center" style="height: 100%">学生个人申明</div>
+        <el-col style="flex: 1; border-left: 1px solid #000">
           <p class="p1">我保证，以上信息完全符合事实。</p>
-          <el-input style="height: 79px;" type="textarea" v-model="form.date.applyOpinion"></el-input>
+          <el-input
+            style="height: 79px"
+            type="textarea"
+            v-model="form.date.applyOpinion"
+          ></el-input>
           <!-- <div class="flex">
             <el-col :span="12" class="flex">
               <div class="center">申请人签名：</div>
@@ -282,7 +297,7 @@ export default {
           birthplaceProvince: "",
           birthplace: "",
           birthplaceNation: "",
-          urgencyDegree: "1",
+          modelId: "357503",
         },
       },
       options: [
@@ -351,26 +366,67 @@ export default {
       this.$api.base
         .item({ comformInfo: JSON.stringify(this.comformInfo) })
         .then((res) => {
-          this.form = res;
-          this.date.push(this.form.date.proDate1);
-          this.date.push(this.form.date.proDate2);
-          console.log(this.form);
-          this.$store.commit("GET_FROM", this.form);
+          this.init(res);
         });
     } else {
       console.log(1);
+      this.form.date.createBy = JSON.parse(
+        JSON.parse(localStorage.vuex).loginList
+      ).id;
       this.$store.commit("GET_FROM", this.form);
+      this.$store.commit("SET_PROCESSLIST", []);
     }
   },
-  mounted() {
-    this.$store.commit("GET_FROM", this.form);
-  },
+  mounted() {},
   methods: {
+    init(data) {
+      let one = {
+        pageNumber: 1,
+        pageSize: 10000,
+      };
+      let two = {
+        businessKey: sessionStorage.tableId,
+      };
+      this.$api.process
+        .getthisprocess(one, two)
+        .then((res) => {
+          this.form = data;
+           if (
+            this.form.date.proDate1 === null ||
+            this.form.date.proDate2 === null
+          ) {
+            this.date = [];
+          } else {
+            this.date.push(this.form.date.proDate1);
+            this.date.push(this.form.date.proDate2);
+          }
+          this.form.date.modelId = "357503";
+          this.form.date.show = true;
+          this.form.date.urgencyDegree = "1";
+          if (res.count > 0) {
+            this.processList = res.data;
+            console.log(this.processList[0].serialNumber);
+            this.form.date.serialNumber = this.processList[0].serialNumber;
+            this.form.date.urgencyDegree = this.processList[0].urgencyDegree;
+            this.$store.commit("SET_PROCESSLIST", res.data);
+          }
+          console.log(this.form);
+          this.$store.commit("GET_FROM", this.form);
+        })
+        .catch((error) => {
+          this.$message.error("失败！");
+        });
+    },
     dateAction() {
       console.log(this.date);
-      this.form.date.proDate1 = this.date[0];
-      this.form.date.proDate2 = this.date[1];
-      this.form.date.dayNum = this.DateMinus(this.date[0], this.date[1]);
+      if (this.date === null) {
+        this.form.date.proDate1 = "";
+        this.form.date.proDate2 = "";
+      } else {
+        this.form.date.proDate1 = this.date[0];
+        this.form.date.proDate2 = this.date[1];
+        this.form.date.dayNum = this.DateMinus(this.date[0], this.date[1]);
+      }
     },
     DateMinus(date1, date2) {
       //date1:小日期   date2:大日期

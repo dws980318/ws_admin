@@ -15,7 +15,11 @@ const state = { // 要设置的全局访问的state对象
     name: 'browserHeaderTitle'
   }) || '后台管理系统',
   login: false,
-  form: {},
+  form: {
+    date: {
+      createBy: ''
+    }
+  },
   token: '',
   powerList: '',
   tableName: '',
@@ -97,6 +101,7 @@ const mutations = {
   },
   GET_FROM(state, data) {
     state.form = data
+    console.log(data)
   },
   SET_LOGINLIST(state, data) {
     state.loginList = data

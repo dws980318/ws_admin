@@ -1,8 +1,8 @@
 import { get, post, form, deletes, put, derive } from './request.js';//导入axios实例文件中方法
 // let bsae_api = process.env.BASE_API ? './'+process.env.BASE_API :'..' //获取项目api请求地址
 //根据id获取用户信息
-let base_api = 'http://192.168.0.109:8081'
-// let base_api = 'http://193.112.76.40:7071'
+// let base_api = 'http://192.168.0.195:8081'
+let base_api = 'http://193.112.76.40:7071'
 
 const api = {
   // 检查session
@@ -112,13 +112,13 @@ const api = {
     if (Math.floor(id) === 1) {
       request_url += ('/getbacklog?pageNumber=' + params.pageNumber + '&pageSize=' + params.pageSize) // 查询待办流程任务
     } else if (Math.floor(id) === 2) {
-      request_url += ('/getcarbonCopy?pageNumber=' + params.pageNumber + '&pageSize=' + params.pageSize) // 查询抄送流程任务
+      request_url += ('/getunderway?pageNumber=' + params.pageNumber + '&pageSize=' + params.pageSize) // 查询抄送流程任务
     } else if (Math.floor(id) === 3) {
       request_url += ('/getfinished?pageNumber=' + params.pageNumber + '&pageSize=' + params.pageSize) // 查询已完成流程任务
     } else if (Math.floor(id) === 4) {
-      request_url += ('/getinitiate?pageNumber=' + params.pageNumber + '&pageSize=' + params.pageSize) // 查询我发起的流程任务
+      request_url += ('/getcarbonCopy?pageNumber=' + params.pageNumber + '&pageSize=' + params.pageSize) // 查询我发起的流程任务
     } else if (Math.floor(id) === 5) {
-      request_url += ('/getunderway?pageNumber=' + params.pageNumber + '&pageSize=' + params.pageSize) // 查询已办流程任务
+      request_url += ('/getinitiate?pageNumber=' + params.pageNumber + '&pageSize=' + params.pageSize) // 查询已办流程任务
     }
     return post(request_url) //resfulapi风格
   },

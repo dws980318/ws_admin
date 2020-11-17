@@ -5,13 +5,15 @@
       <el-button size="small" type="danger" @click="deleteAction">删除项目</el-button>
     </div>-->
     <div class="table">
-      <el-row style="text-align: left;padding: 20px;border-right: 1px solid #000;">
+      <el-row
+        style="text-align: left; padding: 20px; border-right: 1px solid #000"
+      >
         <img src="@/common/images/logo.jpg" />
       </el-row>
       <el-row>
         <h2>广东外语外贸大学孔子学院经费决算申请表</h2>
       </el-row>
-      <el-row>
+      <!-- <el-row>
         <el-col :span="12" class="flex">
           <div class="center">流水号</div>
           <el-input v-model="form.date.serialNumber" disabled style="flex:1;"></el-input>
@@ -27,21 +29,21 @@
             ></el-option>
           </el-select>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-row>
         <el-col :span="24" class="flex">
           <div class="center">标题</div>
           <el-select
             @change="selectAction"
             v-model="form.date.title"
-            style="flex:1;"
+            style="flex: 1"
             placeholder="请选择标题"
           >
             <el-option
               v-for="item in options2"
-              :key="item.title"
+              :key="item.id"
               :label="item.title"
-              :value="item.title"
+              :value="item.id"
             ></el-option>
           </el-select>
         </el-col>
@@ -53,7 +55,12 @@
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">项目属性</div>
-          <el-select disabled v-model="form.date.type" style="flex:1;" placeholder="请选择礼品名称">
+          <el-select
+            disabled
+            v-model="form.date.type"
+            style="flex: 1"
+            placeholder="请选择礼品名称"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -64,30 +71,47 @@
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">项目目标</div>
-          <el-input disabled v-model="form.date.target" style="flex:1;"></el-input>
+          <el-input
+            disabled
+            v-model="form.date.target"
+            style="flex: 1"
+          ></el-input>
         </el-col>
       </el-row>
       <el-row class="flex">
         <div class="center">场地安排</div>
-        <el-input disabled v-model="form.date.address" style="flex:1;"></el-input>
+        <el-input
+          disabled
+          v-model="form.date.address"
+          style="flex: 1"
+        ></el-input>
       </el-row>
       <el-row class="flex">
-        <div class="center" style="height: 80px;">项目内容</div>
+        <div class="center" style="height: 80px">项目内容</div>
         <el-input
           disabled
           type="textarea"
           v-model="form.date.content"
-          style="flex:1;height: 80px;border-left: 1px solid #000;"
+          style="flex: 1; height: 80px; border-left: 1px solid #000"
         ></el-input>
       </el-row>
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">参加人数</div>
-          <el-input disabled v-model="form.date.nnt" @input="numValid" style="flex:1;"></el-input>
+          <el-input
+            disabled
+            v-model="form.date.nnt"
+            @input="numValid"
+            style="flex: 1"
+          ></el-input>
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">项目对应人群</div>
-          <el-input disabled v-model="form.date.proThrong" style="flex:1;"></el-input>
+          <el-input
+            disabled
+            v-model="form.date.proThrong"
+            style="flex: 1"
+          ></el-input>
         </el-col>
       </el-row>
       <el-row>
@@ -107,25 +131,39 @@
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">支出明细</div>
-          <el-input disabled v-model="form.date.disburseDetail" style="flex:1;"></el-input>
+          <el-input
+            disabled
+            v-model="form.date.disburseDetail"
+            style="flex: 1"
+          ></el-input>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12" class="flex">
           <div class="center">支出金额</div>
-          <el-input disabled v-model="form.date.disburseAmount" @input="numValid" style="flex:1;"></el-input>
+          <el-input
+            disabled
+            v-model="form.date.disburseAmount"
+            @input="numValid"
+            style="flex: 1"
+          ></el-input>
         </el-col>
         <el-col :span="12" class="flex">
           <div class="center">支出总额</div>
-          <el-input disabled v-model="form.date.amount" @input="numValid" style="flex:1;"></el-input>
+          <el-input
+            disabled
+            v-model="form.date.amount"
+            @input="numValid"
+            style="flex: 1"
+          ></el-input>
         </el-col>
       </el-row>
       <el-row class="flex">
-        <div class="center" style="height: 80px;">金额发生差异原因</div>
+        <div class="center" style="height: 80px">金额发生差异原因</div>
         <el-input
           type="textarea"
           v-model="form.date.editReason"
-          style="flex:1;height: 80px;border-left: 1px solid #000;"
+          style="flex: 1; height: 80px; border-left: 1px solid #000"
         ></el-input>
       </el-row>
       <el-row class="colum">
@@ -143,18 +181,31 @@
             <div class="center2 btn" @click="addAction">+</div>
           </el-col>
         </el-col>
-        <el-col :span="24" v-for="(item, index) in form.mainformdates[0].dates" :key="index">
+        <el-col
+          :span="24"
+          v-for="(item, index) in form.mainformdates[0].dates"
+          :key="index"
+        >
           <el-col :span="9">
             <el-input v-model="item.date.newPro" class="input2"></el-input>
           </el-col>
           <el-col :span="4">
-            <el-input v-model="item.date.newProAmount" @input="numValids(item)" class="input2"></el-input>
+            <el-input
+              v-model="item.date.newProAmount"
+              @input="numValids(item)"
+              class="input2"
+            ></el-input>
           </el-col>
           <el-col :span="9">
-            <el-input v-model="item.date.newProReason" class="input2"></el-input>
+            <el-input
+              v-model="item.date.newProReason"
+              class="input2"
+            ></el-input>
           </el-col>
           <el-col :span="2">
-            <div class="delete input2" @click="deleteAction(item, index)">-</div>
+            <div class="delete input2" @click="deleteAction(item, index)">
+              -
+            </div>
           </el-col>
         </el-col>
       </el-row>
@@ -220,7 +271,7 @@ export default {
       form: {
         formId: "1298703738672029696",
         date: {
-          urgencyDegree: "1",
+          modelId: "357501",
         },
         mainformdates: [
           {
@@ -232,6 +283,7 @@ export default {
                   newProAmount: "",
                   newProReason: "",
                 },
+                mainformdates: [],
               },
             ],
           },
@@ -259,22 +311,53 @@ export default {
   },
   watch: {},
   created() {
+    this.initType();
     if (this.$store.state.tableName === "经费决算申请流程") {
       this.comformInfo.id = sessionStorage.tableId;
       this.$api.base
         .item({ comformInfo: JSON.stringify(this.comformInfo) })
         .then((res) => {
-          this.form = res;
-          console.log(this.form);
-          this.$store.commit("GET_FROM", this.form);
+          this.init(res);
         });
     } else {
       console.log(1);
+      this.form.date.createBy = JSON.parse(
+        JSON.parse(localStorage.vuex).loginList
+      ).id;
       this.$store.commit("GET_FROM", this.form);
+      this.$store.commit("SET_PROCESSLIST", []);
     }
-    this.initType();
   },
   methods: {
+    init(data) {
+      let one = {
+        pageNumber: 1,
+        pageSize: 10000,
+      };
+      let two = {
+        businessKey: sessionStorage.tableId,
+      };
+      this.$api.process
+        .getthisprocess(one, two)
+        .then((res) => {
+          this.form = data;
+          this.form.date.modelId = "357501";
+          this.form.date.show = true;
+          this.form.date.urgencyDegree = "1";
+          if (res.count > 0) {
+            this.processList = res.data;
+            console.log(this.processList[0].serialNumber);
+            this.form.date.serialNumber = this.processList[0].serialNumber;
+            this.form.date.urgencyDegree = this.processList[0].urgencyDegree;
+            this.$store.commit("SET_PROCESSLIST", res.data);
+          }
+          console.log(this.form);
+          this.$store.commit("GET_FROM", this.form);
+        })
+        .catch((error) => {
+          this.$message.error("失败！");
+        });
+    },
     numValid() {
       if (this.form.e) {
         this.form.e = this.form.e.replace(/[^0-9]/g, "");
@@ -311,8 +394,8 @@ export default {
     selectAction() {
       console.log(this.form.date.title);
       for (let i in this.options2) {
-        if (this.form.date.title === this.options2[i].title) {
-          this.form.date.serialCode = this.options2[i].serialCode;
+        if (this.form.date.title === this.options2[i].id) {
+          // this.form.date.serialCode = this.options2[i].serialCode;
           this.form.date.type = this.options2[i].type;
           this.form.date.target = this.options2[i].target;
           this.form.date.address = this.options2[i].address;
@@ -523,5 +606,5 @@ export default {
   &:hover {
     color: red;
   }
-} 
+}
 </style>

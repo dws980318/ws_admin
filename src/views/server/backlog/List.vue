@@ -57,8 +57,8 @@
             <el-table-column label="状态" width="100" align="center">
               <template slot-scope="scope">
                 <span
-                  :class="scope.row.activitiStatus==='审结'?'success-state':''||scope.row.activitiStatus==='不通过'?'error-state':'' || 'warning-state'"
-                >{{ scope.row.activitiStatus }}</span>
+                  :class="scope.row.activitiStatus==='005'?'success-state':''||scope.row.activitiStatus==='004'?'error-state':'' || 'warning-state'"
+                >{{ aaa(scope.row.activitiStatus) }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -137,14 +137,14 @@ export default {
         .getbacklog(id, this.URLparams)
         .then((res) => {
           if (res.data) {
-            for (let i in this.options) {
-              for (let j in res.data) {
-                if (this.options[i].dicValue === res.data[j].activitiStatus) {
-                  console.log(j);
-                  res.data[j].activitiStatus = this.options[i].dicName;
-                }
-              }
-            }
+            // for (let i in this.options) {
+            //   for (let j in res.data) {
+            //     if (this.options[i].dicValue === res.data[j].activitiStatus) {
+            //       console.log(j);
+            //       res.data[j].activitiStatus = this.options[i].dicName;
+            //     }
+            //   }
+            // }
             setTimeout(() => {
               console.log(res.data);
               this.tableData = res.data;
@@ -156,6 +156,16 @@ export default {
         .catch((error) => {
           this.loading = false;
         });
+    },
+    aaa(value) {
+      console.log(value)
+      let one = ''
+      for(let i in this.options) {
+        if(this.options[i].dicValue === value) {
+          one = this.options[i].dicName
+        }
+      }
+      return one
     },
     hanldeSeach() {
       // 搜索
